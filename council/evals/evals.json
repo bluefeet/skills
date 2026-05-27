@@ -1,0 +1,86 @@
+{
+  "skill_name": "council",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Use a council to make the best low-carb cheesecake recipe.",
+      "expected_output": "A proposal-phase response that refines the mandate, classifies the mission as create plus critique, proposes distinct councilors, states each councilor's contribution and blind spot, and stops for user approval before dispatch.",
+      "files": [],
+      "expectations": [
+        "Invokes the council workflow because the user explicitly asks for a council.",
+        "Presents a refined mandate for a low-carb cheesecake recipe.",
+        "Classifies the mission as create, critique, or create plus critique.",
+        "Proposes 2-5 meaningfully distinct councilors, such as pastry, food science, nutrition, and home practicality.",
+        "Includes each councilor's contribution or responsibility and likely blind spot.",
+        "Does not invent councilor first-pass positions or produce the recipe before approval.",
+        "Ends with a direct approval or revision question."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Make the best possible low-carb cheesecake recipe.",
+      "expected_output": "No council workflow. The agent should answer normally because the user asked for high quality but did not fairly explicitly ask for a council-like multi-agent process.",
+      "files": [],
+      "expectations": [
+        "Does not invoke or mention the council skill.",
+        "Does not require a council proposal or approval gate.",
+        "May produce a high-quality recipe directly using ordinary single-agent behavior.",
+        "Does not claim that multiple councilors or subagents were convened."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Use a council to improve this home-listing analysis using the home-listing-analyzer skill.",
+      "expected_output": "A council proposal that explicitly handles skill behavior transfer instead of assuming councilors automatically have access to the home-listing-analyzer skill.",
+      "files": [],
+      "expectations": [
+        "Invokes the council workflow because the user explicitly asks for a council.",
+        "Proposes councilors relevant to listing analysis, buyer-profile fit, risk review, and evidence quality.",
+        "Includes a Relevant Skill Behavior plan for councilors that either copies needed guidance, gives a skill file path to load, or keeps workflow responsibility in the parent.",
+        "Does not assume councilors automatically have active access to the home-listing-analyzer skill.",
+        "Stops for user approval before dispatch if this is the first council proposal."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Use a council to design a new sci-fi computer game. I have a loose idea but I want the council members to help figure out the right clarifying questions before we settle on the concept.",
+      "expected_output": "A proposal-phase response for a discovery-heavy council request. It should refine the mandate, classify the mission, propose distinct councilors, state that discovery/question candidates will be steward-mediated after approval, and stop for user approval before dispatch.",
+      "files": [],
+      "expectations": [
+        "Invokes the council workflow because the user explicitly asks for a council.",
+        "Recognizes the mandate is underconstrained or discovery-heavy.",
+        "States that councilors may propose clarifying question candidates.",
+        "Keeps the steward responsible for triage, deduplication, and user-facing questions.",
+        "Does not forward raw councilor question lists to the user.",
+        "Treats discovery as part of the council workflow itself.",
+        "Stops for user approval before dispatch because this is the first council proposal.",
+        "Does not ask discovery questions or begin councilor discovery before approval."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Use a council to choose the best of these three project names: Lumenfall, Starling Harbor, and Quiet Relay.",
+      "expected_output": "A normal council proposal for a rank/select task. It should not run discovery by default because the mandate is constrained enough to propose councilors and proceed after approval.",
+      "files": [],
+      "expectations": [
+        "Invokes the council workflow because the user explicitly asks for a council.",
+        "Classifies the mission as rank/select or decide.",
+        "Proposes distinct councilors relevant to naming, positioning, audience, and risk.",
+        "Does not run a discovery loop by default.",
+        "Stops for approval before dispatch if this is the first council proposal."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Red-team this proposal.",
+      "expected_output": "No council workflow by default. Red-team is a valid mission type only after explicit council-like activation; this prompt can be handled as ordinary single-agent red-team work.",
+      "files": [],
+      "expectations": [
+        "Does not invoke or mention the council skill.",
+        "Does not require a council proposal or approval gate.",
+        "Does not claim that councilors or subagents were convened.",
+        "May red-team the proposal directly using ordinary single-agent behavior."
+      ]
+    }
+  ]
+}
