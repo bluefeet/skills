@@ -1,0 +1,29 @@
+{
+  "skill_name": "home-buyer-profile",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a home buyer profile for a first-time buyer in Portland who is still figuring out what they can afford. They want to buy a residential home to live in, are not pre-approved yet, and need mostly multiple-choice questions because they are overwhelmed.",
+      "expected_output": "A buyer-profile markdown file under ~/home-search that starts with calibration, uses mostly multiple-choice questions, avoids storing sensitive financial details, and records uncertainty clearly.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Create a buyer profile for an experienced buyer who is pre-approved. They hope to stay near $725k, can stretch to $775k for the right home, and have a hard ceiling of $825k. They care about North Portland, functional bedrooms, low road noise, and avoiding risky foundations.",
+      "expected_output": "A buyer profile that captures target/stretch/hard ceiling separately, records high budget confidence, stores preferences and interpreted decision rules, and does not store sensitive financial details.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I already have a buyer profile. Help me modify it because I realized condos are okay but land-only properties are not, and road noise should be a stronger negative.",
+      "expected_output": "The skill should detect the existing profile workflow, modify rather than replace, update relevant sections, and record the change in the change log.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Apply these approved profile updates: add functional bedroom layout as a strong preference, add foundation concerns as a dealbreaker unless inspection says otherwise, and record that shared driveway was considered but rejected as a profile signal.",
+      "expected_output": "The profile should apply approved updates to the correct sections, record the declined shared-driveway signal under Rejected Signals, and preserve the distinction between stated preferences and interpreted rules.",
+      "files": []
+    }
+  ]
+}

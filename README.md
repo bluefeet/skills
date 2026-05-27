@@ -49,3 +49,17 @@ Example prompts:
 - "Preview updating this branch onto main and tell me the risks before rebasing."
 
 Read more at [git-conflict/SKILL.md](git-conflict/SKILL.md).
+
+### home-buyer-profile
+
+Creates and maintains a durable markdown profile for someone buying a residential home to live in. The profile captures search criteria, budget readiness signals, locations, dealbreakers, preferences, tradeoffs, uncertainty, rejected signals, and approved updates discovered from listing feedback.
+
+It writes and updates `~/home-search/buyer-profile.md`, asks adaptive one-question-at-a-time interview prompts, and avoids storing sensitive financial details. It is scoped to residential home purchases and should come before buyer-centered listing scoring or comparison when no profile exists.
+
+Example prompts:
+
+- "Create a home buyer profile for my search."
+- "Update my buyer profile with these new dealbreakers."
+- "Help me clarify my budget, location, and tradeoff criteria before I compare listings."
+
+Read more at [home-buyer-profile/SKILL.md](home-buyer-profile/SKILL.md).
