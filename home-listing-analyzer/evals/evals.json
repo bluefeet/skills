@@ -1,0 +1,47 @@
+{
+  "skill_name": "home-listing-analyzer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Import this pasted RMLS-style listing for 10249 N Tyler Ave, Portland, OR 97203. It is active, $479,000, 3 beds, 2 baths, 1146 sqft, detached ranch, HOA no, MLS#555676113, with a remodeled description and room dimensions. Use the existing buyer profile.",
+      "expected_output": "Creates a main listing file and companion source file with import-date address filenames, extracts facts, stores minimally formatted source content separately, records an import activity log entry, and identifies unknowns like remodel scope and cooling.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Import this Zillow apartment community URL: https://www.zillow.com/apartments/portland-or/the-waverleigh-apartments/5XjV3L/",
+      "expected_output": "Refuses the import because it is a rental apartment community, using a concise user-facing explanation and not creating listing files.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Import this Redfin URL, but the page does not show a confirmed street address: https://www.redfin.com/OR/Portland/33rd-Ave-97219/home/191748253",
+      "expected_output": "Stops import, asks for the confirmed full street address, and does not create an unknown-address fallback file.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Update the existing Tyler Ave listing. The price dropped from $479,000 to $459,000 and Market Status changed from Active to Pending.",
+      "expected_output": "Updates current listing facts, preserves history in Listing Events, and treats this as an update to the existing address record rather than a new listing.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Add initial feedback for Tyler Ave: cute remodel, like the one-level layout, nervous it is a flip, and the bedrooms may be too small. When done, suggest any buyer profile updates but do not apply them.",
+      "expected_output": "Writes a timestamped Activity Log entry, updates listing interpretation, and presents Proposed Buyer Profile Updates with Evidence and Section lines without applying them.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Add realtor feedback for Blandena: 'Lovely house but I feel pretty confident the foundation will rule it out. There are other things to note that could either be immediate or within a short time that would need to be addressed.'",
+      "expected_output": "Records Advisor Feedback with raw feedback preserved separately from interpretation, identifies condition/risk impact, and adds follow-up questions.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Report on all active listings.",
+      "expected_output": "Generates an in-chat report, states the active-listing filter used, and does not create or rely on a listing-index.md file.",
+      "files": []
+    }
+  ]
+}

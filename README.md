@@ -63,3 +63,17 @@ Example prompts:
 - "Help me clarify my budget, location, and tradeoff criteria before I compare listings."
 
 Read more at [home-buyer-profile/SKILL.md](home-buyer-profile/SKILL.md).
+
+### home-listing-analyzer
+
+Manages durable markdown records for residential home-for-purchase listings in a buyer's search. It imports, updates, scores, compares, and reports on listings under `~/home-search/listings/`, using the buyer profile as the foundation for fit analysis.
+
+During import or update, it gathers source content, confirms the listing is in scope, requires a full street address, checks for duplicates, creates or updates a main listing file plus a companion source file, and preserves facts, feedback, unknowns, fit analysis, profile signals, and activity history. If no buyer profile exists, the buyer profile workflow comes first.
+
+Example prompts:
+
+- "Import this home listing into my search."
+- "Score this listing against my buyer profile."
+- "Compare the active listings and tell me which ones deserve a tour."
+
+Read more at [home-listing-analyzer/SKILL.md](home-listing-analyzer/SKILL.md).
