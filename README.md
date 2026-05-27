@@ -35,3 +35,17 @@ Example prompts:
 - "Use several specialist subagents to review this feature spec before implementation."
 
 Read more at [council/SKILL.md](council/SKILL.md).
+
+### git-conflict
+
+Resolves and recovers from Git conflicts or interrupted Git operations, including merge, rebase, cherry-pick, revert, stash apply or pop, autostash, marker-only cleanup, and safe branch rebase or update previews.
+
+Before interpreting sides or recommending changes, it detects the actual Git state. It separates read-only inspection from mutating actions, asks for confirmation before editing, staging, continuing, skipping, aborting, or rebasing, and verifies that intended resolved paths have no remaining unmerged entries or conflict markers. It is not for generic Git advice, ordinary commits, commit-message drafting, or branch-history cleanup.
+
+Example prompts:
+
+- "Help me resolve this rebase conflict."
+- "I have conflict markers in a file but Git says nothing is unmerged. Clean this up."
+- "Preview updating this branch onto main and tell me the risks before rebasing."
+
+Read more at [git-conflict/SKILL.md](git-conflict/SKILL.md).

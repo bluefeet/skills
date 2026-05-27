@@ -1,0 +1,57 @@
+{
+  "skill_name": "git-conflict",
+  "evals": [
+    {
+      "id": "operation-dispatch-before-mutation",
+      "prompt": "I have two conflict-ish Git states. Tell me how you'd dispatch each one, but don't make changes yet.\n\nCase A: I think this is a merge conflict from pulling main.\n\n$ git status --short --branch\n## feature/billing\nUU billing/invoice.py\nM  tests/test_invoice.py\n\n$ git status\nOn branch feature/billing\nYou are currently cherry-picking commit 7f6a5b4.\n  (fix conflicts and run \"git cherry-pick --continue\")\n  (use \"git cherry-pick --skip\" to skip this patch)\n  (use \"git cherry-pick --abort\" to cancel the cherry-pick operation)\n\nUnmerged paths:\n\tboth modified:   billing/invoice.py\n\n$ test -f .git/CHERRY_PICK_HEAD; echo $?\n0\n\n$ test -f .git/MERGE_HEAD; echo $?\n1\n\nCase B: This one just has marker text in a file.\n\n$ git status --short --branch\n## main\n M README.md\n\n$ git ls-files -u\n\n$ test -d .git/rebase-merge || test -d .git/rebase-apply || test -f .git/MERGE_HEAD || test -f .git/CHERRY_PICK_HEAD || test -f .git/REVERT_HEAD; echo $?\n1\n\n$ rg -n '^(<<<<<<<|=======|>>>>>>>)( |$)' README.md\n12:<<<<<<< HEAD\n20:=======\n27:>>>>>>> old-docs",
+      "expected_output": "The agent dispatches from Git state rather than user wording. It classifies Case A as a cherry-pick conflict and Case B as marker-only cleanup with no active Git continuation. It avoids stage inspection when there are no unmerged index entries and asks before mutation.",
+      "files": [],
+      "assertions": [
+        "Classifies Case A from cherry-pick metadata rather than the user's merge wording.",
+        "Uses cherry-pick-specific side meanings and continuation, skip, and abort commands for Case A, and does not suggest `git merge --continue` or `git rebase --continue`.",
+        "For Case B, explains that no Git continuation command applies because there are markers but no unmerged index entries or active operation metadata.",
+        "Does not suggest `git show :1:<path>`, `:2:`, or `:3:` for Case B.",
+        "Asks before side selection, editing marker-only files, staging, continuing, skipping, or aborting; any mutating commands shown before approval are clearly labeled post-confirmation examples."
+      ]
+    },
+    {
+      "id": "rebase-missing-stage-continue-gate",
+      "prompt": "I'm rebasing my feature branch and hit this conflict. What do the sides mean, and how should I finish?\n\n$ git status --short --branch\n## HEAD (no branch)\nDU config/new-option.txt\n\n$ git status\ninteractive rebase in progress; onto 8b31c2d\nLast command done (1 command done):\n   pick 4d5e6f7 add new option docs\nNo commands remaining.\nYou are currently rebasing branch 'feature' on '8b31c2d'.\n  (fix conflicts and then run \"git rebase --continue\")\n  (use \"git rebase --skip\" to skip this patch)\n  (use \"git rebase --abort\" to check out the original branch)\n\nUnmerged paths:\n\tdeleted by us:   config/new-option.txt\n\n$ git ls-files -u -- config/new-option.txt\n100644 a111111111111111111111111111111111111111 1\tconfig/new-option.txt\n100644 c333333333333333333333333333333333333333 3\tconfig/new-option.txt",
+      "expected_output": "The agent identifies an active rebase with a delete/modify conflict whose target side has no stage 2 blob. It explains only present stages, avoids absent stage reads, offers resolution choices, and requires verification plus confirmation before continuing.",
+      "files": [],
+      "assertions": [
+        "Identifies this as an active rebase and explains that stage 2 or `ours` would be the target branch state while stage 3 or `theirs` is the replayed commit.",
+        "Recognizes that `git ls-files -u` shows no stage 2 for `config/new-option.txt` and does not suggest inspecting `:2:config/new-option.txt`.",
+        "Offers keep-deletion, keep-replayed-file, or skip-commit as user choices rather than selecting a resolution unprompted.",
+        "Does not suggest `git merge --continue`, stash continuation commands, or a run-now side-selection plus `git rebase --continue` sequence before confirmation.",
+        "Requires checking unresolved index entries and remaining conflict markers before `git rebase --continue`."
+      ]
+    },
+    {
+      "id": "stash-pop-safe-backout",
+      "prompt": "I ran `git stash pop` and now I'm conflicted. I may want to undo the pop if this is messy, but I also had a local `package.json` edit before I popped the stash.\n\n$ git status --short --branch\n## main\nUU server.py\n M package.json\n?? notes/debug.txt\n\n$ git status\nOn branch main\nUnmerged paths:\n\tboth modified:   server.py\n\nChanges not staged for commit:\n\tmodified:   package.json\n\nUntracked files:\n\tnotes/debug.txt\n\n$ git ls-files -u -- server.py\n100644 b111111111111111111111111111111111111111 1\tserver.py\n100644 b222222222222222222222222222222222222222 2\tserver.py\n100644 b333333333333333333333333333333333333333 3\tserver.py\n\n$ sed -n '1,80p' server.py\n<<<<<<< Updated upstream\nPORT = 443\n=======\nPORT = 9000\n>>>>>>> Stashed changes\n\n$ git stash list\nstash@{0}: On main: try port 9000",
+      "expected_output": "The agent treats this as a stash apply/pop conflict, not a merge or rebase. It rejects fake stash continuation or abort commands, preserves evidence before backout advice, distinguishes resolving `server.py` from discarding other local work, and gates destructive cleanup.",
+      "files": [],
+      "assertions": [
+        "Classifies the state as a stash apply/pop conflict instead of a merge, rebase, cherry-pick, or revert operation.",
+        "Does not suggest `git stash --continue`, `git stash apply --continue`, or a universal `git stash --abort`.",
+        "Preserves evidence with status, unmerged paths or stages, diffs or staged diffs, and stash list before backout advice.",
+        "Distinguishes resolving the conflicted `server.py` path from broadly discarding `package.json`, `notes/debug.txt`, or other applied/local changes.",
+        "Does not present `git reset --hard`, `git clean`, broad `git restore`, or `git stash drop` as run-now commands before direct confirmation and recoverability checks."
+      ]
+    },
+    {
+      "id": "branch-update-preview-risk-gate",
+      "prompt": "Please rebase this branch before I open the PR. Can we just use `--autostash`?\n\n$ git status --short --branch --ignored\n## feature/assets...origin/feature/assets [ahead 3]\n?? config/local.yml\n?? docs/generated/\n!! build/report.json\n\n$ git diff --name-only\n\n$ git diff --name-only --cached\n\n$ git branch --show-current\nfeature/assets\n\n$ git rev-parse --short main origin/main upstream/main HEAD\n8aa1000\n9bb2000\nacc3000\nbdd4000\n\n$ git branch -vv\n* feature/assets bdd4000 [origin/feature/assets: ahead 3] generate asset report\n  main           8aa1000 [upstream/main: behind 14] local main from last week\n\n$ git remote -v\norigin\tgit@github.com:myfork/shop.git (fetch)\norigin\tgit@github.com:myfork/shop.git (push)\nupstream\tgit@github.com:company/shop.git (fetch)\nupstream\tgit@github.com:company/shop.git (push)\n\n$ git diff --name-only HEAD..upstream/main\nconfig/local.yml\ndocs/generated/index.md\nsrc/app.js\n\n$ git diff --name-only upstream/main..HEAD\nbuild/report.json\nsrc/assets.js\n\nI usually open PRs against the company repo, but sometimes I push my fork first. Go ahead if it's safe.",
+      "expected_output": "The agent treats the request as a branch-update preview, not an active conflict. It does not guess the rebase target, treats fetch as remote contact, previews before rebase, explains that autostash does not protect untracked or ignored collisions, and stops for a handling choice before mutation.",
+      "files": [],
+      "assertions": [
+        "Recognizes base ref ambiguity and does not guess between local `main`, `origin/main`, and `upstream/main`.",
+        "Treats `git fetch` or refreshing remotes as confirmation-gated remote contact, or says any preview is based on existing local refs.",
+        "Includes or asks for replayed and incoming commit or path previews before any rebase.",
+        "States that `--autostash` does not protect untracked files and identifies ignored-file or likely ignored-file collision risk as outside autostash protection.",
+        "Compares untracked or ignored paths against incoming and replayed changed paths, treats exact and parent-child overlaps as risky, and asks which handling option to use before rebase."
+      ]
+    }
+  ]
+}
