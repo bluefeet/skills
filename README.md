@@ -77,3 +77,19 @@ Example prompts:
 - "Compare the active listings and tell me which ones deserve a tour."
 
 Read more at [home-listing-analyzer/SKILL.md](home-listing-analyzer/SKILL.md).
+
+### skill-review
+
+Reviews an existing skill directory, `SKILL.md` file, or pasted skill text for skill-authoring quality. It audits metadata, trigger behavior, scope boundaries, progressive disclosure, instruction design, examples, bundled assets, dependencies, validation loops, and evaluation quality.
+
+The output is a best-practices review with an overall status, strengths, severity-ranked findings, a category scorecard, behavioral checks needed, and suggested improvement order. It distinguishes static evidence from behavior that would require observed usage, eval outputs, or transcripts; it does not run a full eval loop itself.
+
+Example prompts:
+
+- "Review this skill for trigger reliability and authoring quality."
+- "Audit `skill-review/SKILL.md` and tell me what needs improvement."
+- "Quality-check this pasted skill before I install it."
+
+This skill was greatly inspired by the [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) from the Claude API Docs.
+
+Read more at [skill-review/SKILL.md](skill-review/SKILL.md).

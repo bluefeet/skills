@@ -1,0 +1,116 @@
+{
+  "skill_name": "skill-review",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Review this skill starting from skills/council/SKILL.md. Inspect the containing skill directory when available, including directly referenced references and evals, then produce a best-practice skill review.",
+      "expected_output": "A structured review that identifies strengths, applies the rubric by category, inspects directory context beyond SKILL.md, avoids numeric scoring, and reports only evidence-backed findings.",
+      "files": [
+        "skills/council/SKILL.md",
+        "skills/council/references/mission-types.md",
+        "skills/council/references/brief-templates.md",
+        "skills/council/evals/evals.json"
+      ],
+      "expectations": [
+        "Produces a Skill Review report with Overall Assessment, Strengths, Findings, Category Scorecard, Behavioral Checks Needed, and Suggested Improvement Order.",
+        "Uses qualitative status language rather than numeric scoring.",
+        "Inspects directory context beyond SKILL.md, including the listed reference and eval files.",
+        "Recognizes clear trigger boundaries, proposal gate behavior, progressive disclosure, and council state wording as meaningful positive design elements or review evidence.",
+        "Does not invent source branding or provenance language.",
+        "Marks behavioral trigger reliability as needing behavioral evidence when it cannot be proven from files alone."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Review a draft skill whose SKILL.md has weak frontmatter: the name is 'Review Skill!!!' and the description only says 'helps with skills'.",
+      "expected_output": "A structured review with blocker or major findings for invalid or weak metadata and concrete recommendations for a valid name and trigger-focused description.",
+      "files": [],
+      "expectations": [
+        "Flags invalid or poorly formed metadata under Metadata Validity.",
+        "Flags the weak description under Discovery And Activation.",
+        "Explains why a description must say both what the skill does and when to use it.",
+        "Recommends a lowercase slug skill name, such as review-skill for this prompt, and a specific trigger-oriented description.",
+        "Does not over-focus on eval readiness before addressing metadata and activation issues."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Review a skill draft that has a 900-line SKILL.md, three nested levels of references, no table of contents in long reference files, and several repeated examples that all teach the same thing.",
+      "expected_output": "A structured review that prioritizes context efficiency and information architecture, with recommendations for progressive disclosure and reference cleanup.",
+      "files": [],
+      "expectations": [
+        "Flags excessive SKILL.md length under Context Efficiency.",
+        "Flags nested reference depth and missing tables of contents under Information Architecture.",
+        "Recommends moving dense detail to direct references and removing repetitive examples.",
+        "Distinguishes token-cost concerns from navigability concerns.",
+        "Marks behavioral evidence as needed only for claims that require observed use."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Review a skill that bundles scripts/build_report.py but does not list dependencies, expected runtime, error behavior, or whether the script should be executed or read as reference.",
+      "expected_output": "A structured review focused on executable assets and dependency clarity.",
+      "files": [],
+      "expectations": [
+        "Flags missing dependency and runtime assumptions under Executable Assets And Dependencies.",
+        "Flags unclear script usage instructions under Executable Assets And Dependencies.",
+        "Recommends documenting whether the script should be run or read as reference.",
+        "Recommends useful error behavior or expected failure messages.",
+        "Treats script criteria as conditional because they apply only when executable assets exist."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Review a compact, well-structured skill with valid metadata, a short workflow, direct references, concrete output format, and a few representative eval prompts. The skill has no obvious static blocker or major issue, and any remaining behavioral checks are routine follow-up rather than reliance-critical uncertainty.",
+      "expected_output": "A structured review with overall status ready, mostly strengths, no manufactured major findings, and only minor or advisory suggestions if useful.",
+      "files": [],
+      "expectations": [
+        "Uses ready as the overall status because no blocker or major issue is present and remaining behavioral checks are routine or non-blocking.",
+        "Includes clear strengths rather than only problems.",
+        "Does not treat every ordinary unknown as needs behavioral evidence.",
+        "Does not manufacture blockers or major findings to fill the report.",
+        "Marks unavailable runtime behavior as Behavioral Checks Needed when useful instead of pretending certainty.",
+        "Keeps improvement order short and proportionate."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Review a shared skill's eval suite. It has twelve evals, but six are small variations of 'format this output as markdown', three check punctuation details, two would pass without the skill, and only one covers the core failure mode the skill was created to prevent.",
+      "expected_output": "A structured review that flags low-signal, redundant, and poorly prioritized eval coverage, then recommends pruning or rewriting the suite around the highest-value behaviors.",
+      "files": [],
+      "expectations": [
+        "Flags duplicate or overlapping evals under Evaluation Quality And Efficiency.",
+        "Flags low-actionability or low-signal evals whose failures would not guide meaningful skill improvements.",
+        "Identifies evals that would likely pass without the skill as weak discriminators.",
+        "Recommends preserving or expanding coverage of the core failure mode over punctuation or narrow formatting checks.",
+        "Recommends a smaller fast core suite and pruning, merging, or moving lower-value cases to expanded coverage."
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Review an eval for a git-conflict skill. The eval asks the agent to run git status, git ls-files -u, and git rebase --show-current-patch during the eval, but the purpose is to test how the skill interprets those outputs and decides whether to continue, ask, or inspect more context.",
+      "expected_output": "A structured review that recommends making the eval self-contained with representative tool-output fixtures unless the goal is live integration testing.",
+      "files": [],
+      "expectations": [
+        "Flags that tool-result interpretation evals should include representative sample tool output instead of requiring live tool calls.",
+        "Explains that fixture outputs make the eval cheaper, faster, more reproducible, and focused on skill reasoning.",
+        "Recommends sample outputs for success, failure, ambiguity, or edge cases when those branches matter.",
+        "Distinguishes reasoning-over-output evals from end-to-end tool integration evals.",
+        "Does not imply live tool calls are always wrong when the eval explicitly tests integration or invocation behavior."
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Review a skill that is clean and well organized on static inspection: valid metadata, concise workflow, direct references, clear output format, and no blocker or major file-level issues. However, the skill's core value is that it reliably triggers only for a narrow class of ambiguous user requests, and there are no transcripts, eval outputs, or usage examples showing that trigger boundary works.",
+      "expected_output": "A structured review with overall status needs behavioral evidence because the static review is acceptable but material confidence depends on observed trigger behavior.",
+      "files": [],
+      "expectations": [
+        "Uses needs behavioral evidence as the overall status because material confidence depends on observed usage, eval output, or transcripts.",
+        "Does not manufacture a static blocker or major finding when the prompt says static inspection is acceptable.",
+        "Explains that the missing trigger-boundary evidence materially affects reliance on the skill.",
+        "Includes a Behavioral Checks Needed item for reviewing transcripts, running trigger evals, or otherwise observing trigger behavior.",
+        "Keeps static suggestions minor or advisory unless the prompt gives concrete evidence for a stronger finding."
+      ]
+    }
+  ]
+}
