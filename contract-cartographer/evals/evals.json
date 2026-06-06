@@ -1,0 +1,73 @@
+{
+  "skill_name": "contract-cartographer",
+  "evals": [
+    {
+      "id": "evidence-conflict",
+      "prompt": "Map the contract for `normalizeCustomer(input)` from these excerpts.\n\n`customer/normalizeCustomer.ts`:\n```ts\nexport function normalizeCustomer(input) {\n  if (!input.email) throw new Error('email required');\n  return { email: input.email.trim().toLowerCase(), name: input.name?.trim() ?? '' };\n}\n```\n\n`signup/createAccount.ts`:\n```ts\ntry {\n  const customer = normalizeCustomer(formInput);\n  return createAccount(customer);\n} catch (error) {\n  if (error.message === 'email required') {\n    return showValidationMessage('Email is required');\n  }\n  throw error;\n}\n```\n\n`imports/importCustomers.ts`:\n```ts\nconst rowsToImport = csvRows.filter((row) => row.email);\nreturn rowsToImport.map((row) => normalizeCustomer(row));\n```\n\n`tests/normalizeCustomer.test.ts`:\n```ts\nit.skip('returns null when email is missing', () => {\n  expect(normalizeCustomer({ name: 'Ada' })).toBeNull();\n});\n```\n\n`docs/imports.md` excerpt:\n```md\nCSV rows without an email address are ignored during customer import.\n```",
+      "expected_output": "A diagnostic contract map that infers evidence authority from the excerpts instead of treating every source equally. It should identify the direct runtime behavior, separate signup behavior from import workflow behavior, treat the skipped null-return test as weak or conflicting evidence, scope the docs to CSV import, separate severity from confidence, and rank the missing-email contract conflict.",
+      "files": [],
+      "assertions": [
+        "Includes scan bounds or an equivalent statement of inspected scope for the provided excerpts.",
+        "Identifies implementation plus live caller code as stronger runtime evidence than the skipped test or workflow-specific docs.",
+        "Explains that signup observes the thrown `email required` path while imports filter missing-email rows before calling the function.",
+        "Does not present the skipped null-return test or import docs as a direct runtime guarantee for `normalizeCustomer(input)`.",
+        "Separates severity from confidence or otherwise makes confidence lower where intent is only inferred.",
+        "Includes a ranked finding about the ambiguous or stale missing-email contract."
+      ]
+    },
+    {
+      "id": "broad-parameter-object",
+      "prompt": "Diagnose the contract around `buildReport(context)` from these excerpts.\n\n`reports/buildReport.ts`:\n```ts\nexport function buildReport(context) {\n  const rows = context.rows ?? [];\n  const timezone = context.user.settings.timezone;\n  const includeCosts = context.permissions.includes('cost:read');\n  if (context.mode === 'summary') return summarize(rows, timezone);\n  const currency = context.org.billing.currency;\n  return detailed(rows, timezone, includeCosts, currency, context.format ?? 'csv');\n}\n```\n\n`dashboards/summaryReport.ts`:\n```ts\nreturn buildReport({\n  mode: 'summary',\n  rows,\n  user: { settings: { timezone: account.timezone } },\n  permissions: []\n});\n```\n\n`finance/exportCostReport.ts`:\n```ts\nreturn buildReport({\n  mode: 'detailed',\n  rows,\n  user: { settings: { timezone: user.timezone } },\n  permissions: user.permissions,\n  org: { billing: { currency: org.currency } },\n  format: 'xlsx'\n});\n```\n\n`tests/buildReport.test.ts` uses a helper named `makeRequestContext()` that fills a 40-line request-shaped object with `user`, `org`, `permissions`, feature flags, session data, request ids, and default rows before each report test overrides two or three fields.",
+      "expected_output": "A contract diagnosis, not a redesign. The report should infer which fields are required for all modes versus detailed mode, identify the broad context object and test setup burden as contract evidence, capture permission and format expectations, and avoid replacement type/API sketches or broad implementation plans.",
+      "files": [],
+      "assertions": [
+        "Includes scan bounds or an equivalent statement of inspected scope for the provided excerpts.",
+        "Maps the broad request context as the contract surface and identifies it as a source of hidden requirements.",
+        "Distinguishes always-required fields from detailed-mode-only fields, including that summary mode returns before reading `org.billing.currency`.",
+        "Uses the 40-line request context test helper as evidence that the contract is awkward to set up or underspecified.",
+        "Captures caller-visible permission and format expectations, including `cost:read` and the `xlsx` caller.",
+        "Keeps recommendations diagnostic and does not provide replacement type definitions, new API signatures, adapter/service sketches, or a step-by-step implementation/refactor plan."
+      ]
+    },
+    {
+      "id": "runtime-contract-vs-test-double",
+      "prompt": "Audit the contract around `PaymentsClient.charge(invoice, options)` from these excerpts.\n\n`payments/client.ts`:\n```ts\nexport class PaymentsClient {\n  async charge(invoice, options = {}) {\n    const response = await fetch('/payments/charge', {\n      method: 'POST',\n      body: JSON.stringify({ invoiceId: invoice.id, idempotencyKey: options.idempotencyKey })\n    });\n\n    if (response.status === 402) return { status: 'card_declined', retryable: false };\n    if (response.status === 409) return { status: 'duplicate', chargeId: response.headers.get('x-charge-id') };\n    if (response.status >= 500) throw new Error('payments unavailable');\n    if (!response.ok) throw new Error('charge failed');\n    return response.json();\n  }\n}\n```\n\n`billing/finalizeInvoice.ts`:\n```ts\nconst result = await payments.charge(invoice, { idempotencyKey });\n\nif (result.status === 'card_declined') {\n  return markInvoicePaymentFailed(invoice.id, 'card_declined');\n}\n\nif (result.status === 'duplicate' && result.chargeId) {\n  return markInvoicePaid(invoice.id, result.chargeId);\n}\n\nreturn markInvoicePaid(invoice.id, result.chargeId);\n```\n\n`billing/retryFinalizeInvoice.ts`:\n```ts\ntry {\n  return await finalizeInvoice(invoice);\n} catch (error) {\n  if (error.message === 'payments unavailable') {\n    return retryLater(invoice.id);\n  }\n  throw error;\n}\n```\n\n`admin/manualCharge.ts`:\n```ts\ntry {\n  const result = await payments.charge(invoice);\n  return { ok: true, chargeId: result.chargeId };\n} catch (error) {\n  return { ok: false, message: error.message };\n}\n```\n\n`tests/billing.test.ts`:\n```ts\nconst payments = {\n  charge: async () => ({ status: 'paid', chargeId: 'test-charge' })\n};\n\nit('finalizes an invoice with no payment method in the fixture', async () => {\n  await expect(finalizeInvoice(invoiceWithoutPaymentMethod, payments)).resolves.toMatchObject({ paid: true });\n});\n```\n\n`tests/payments-client.test.ts`:\n```ts\nit.skip('marks duplicate charges as paid duplicates', async () => {\n  await expect(client.charge(invoice)).resolves.toEqual({ status: 'paid', duplicate: true });\n});\n```\n\n`docs/payments.md` excerpt:\n```md\nAutomatic billing jobs should pass an idempotency key. If the payments service is unavailable, retry the job later.\n```",
+      "expected_output": "The report should infer which sources prove runtime behavior and which sources are weaker or conflicting. It should map declined-card, duplicate, outage, generic failure, idempotency, billing retry, manual charge, fake, skipped-test, and docs evidence; lower confidence where intent is unclear; and rank the important mismatch or drift.",
+      "files": [],
+      "assertions": [
+        "Includes scan bounds or an equivalent statement of inspected scope for the provided excerpts.",
+        "Distinguishes implementation and live caller code from fake test, skipped test, and docs evidence.",
+        "Identifies runtime contract elements proven by implementation, including `card_declined`, `duplicate`, thrown `payments unavailable`, generic `charge failed`, and the idempotency-key payload.",
+        "Recognizes `billing/finalizeInvoice.ts` and retry code as caller evidence for idempotency, declined-card handling, duplicate handling with `chargeId`, and retrying payment outages.",
+        "Flags that `admin/manualCharge.ts` may mishandle returned `card_declined` or `duplicate` statuses because it treats returned results as success-shaped.",
+        "Does not treat the always-paid fake or the skipped `{ status: 'paid', duplicate: true }` test as runtime contract proof, and ranks test-double or stale-test drift as a contract finding."
+      ]
+    },
+    {
+      "id": "low-risk-aligned-contract",
+      "prompt": "Review the contract around `formatCurrency(cents, currency)`.\n\n```ts\nexport function formatCurrency(cents: number, currency: 'USD' | 'EUR') {\n  const amount = (cents / 100).toFixed(2);\n  return `${currency} ${amount}`;\n}\n```\n\nThree production callers pass integer cents and either `USD` or `EUR`. Tests cover USD, EUR, zero, and negative adjustment values. No caller mutates inputs, catches errors, or depends on side effects. There are no mocks.",
+      "expected_output": "A compact low-risk Contract Map. It should recognize aligned implementation, callers, and tests; avoid blocker or major findings; avoid new layers or replacement APIs; and include only proportionate notes if any uncertainty remains.",
+      "files": [],
+      "assertions": [
+        "Produces a compact output rather than a long multi-section audit.",
+        "Recognizes that implementation, production callers, and tests are aligned around integer cents and `USD`/`EUR` formatting.",
+        "Does not manufacture blocker or major findings.",
+        "Does not introduce services, adapters, interfaces, validation layers, or other new architectural layers.",
+        "Does not advise replacing the function signature or designing a replacement API.",
+        "Limits any notes or recommendations to proportionate low-risk clarifications."
+      ]
+    },
+    {
+      "id": "negative-trigger-ladder",
+      "prompt": "For each request, say whether `contract-cartographer` should be used and why.\n\nA. `Fix the off-by-one bug in paginator.ts.`\nB. `Refactor the billing module to make it cleaner.`\nC. `Design a new checkout architecture for our next app.`\nD. `Map the contract around billing/applyCredits.ts; callers seem to know too much and tests mock half the module.`",
+      "expected_output": "The response should use the skill only for D. A is ordinary bugfix work, B is too generic unless reframed as contract diagnosis, and C is greenfield architecture design rather than existing-code contract diagnosis.",
+      "files": [],
+      "assertions": [
+        "Says not to use the skill for A because it is an ordinary bugfix request.",
+        "Says not to use the skill for B unless it is reframed as existing-code contract diagnosis.",
+        "Says not to use the skill for C because greenfield architecture design is outside this diagnostic scope.",
+        "Says to use the skill for D because it explicitly asks for contract mapping around existing code with caller/test boundary concerns."
+      ]
+    }
+  ]
+}

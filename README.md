@@ -22,6 +22,20 @@ Example prompts:
 
 Read more at [commit-organizer/SKILL.md](commit-organizer/SKILL.md).
 
+### contract-cartographer
+
+Maps the real contract around a user-pointed code target so contract problems become visible before design or implementation work begins. It fits functions, classes, modules, packages, subsystems, workflows, and service boundaries whose callers know too much, tests need awkward mocks, inputs are broad, side effects are surprising, or behavior is hard to change safely.
+
+It starts from the named target, expands through bounded rings of connected callers, callees, tests, mocks, fixtures, config, and state, then reconciles contract claims by evidence strength. The report includes a compact Contract Map, optional caller assumption ledger, scan bounds, and ranked findings with severity, evidence, blast radius, confidence, and diagnostic improvement direction. It is not for ordinary bugfixes, generic code review, broad architecture brainstorming, or implementing an already chosen refactor.
+
+Example prompts:
+
+- "Map the contract around this module before I refactor it."
+- "Callers seem to know too much about `billing/applyCredits.ts`; diagnose the contract problems."
+- "This API is hard to test and the mocks are awkward. What contract drift do you see?"
+
+Read more at [contract-cartographer/SKILL.md](contract-cartographer/SKILL.md).
+
 ### council
 
 Convenes a small, explicit group of specialized subagents for decisions, critiques, plans, diagnoses, research synthesis, or creative artifacts. It is strongest when distinct expert lenses would catch different risks or produce a better synthesis than one linear answer.
