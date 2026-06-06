@@ -1,6 +1,7 @@
 ---
 name: commit-organizer
 description: Organizes committed Git branch history into focused, reviewable linear commits. Use when the user asks to clean up, split, squash, reorder, reconstruct, or make committed branch or range history reviewable before a PR. Do not use for ordinary commit creation, commit-message drafting, generic Git advice, or standalone conflict recovery.
+license: 0BSD
 ---
 
 # Commit Organizer

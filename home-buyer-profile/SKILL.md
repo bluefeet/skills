@@ -1,6 +1,7 @@
 ---
 name: home-buyer-profile
 description: Build and maintain a durable markdown home buyer profile for someone buying a residential home to live in. Use this skill whenever the user wants to create, review, modify, replace, or refine a home buyer profile; define home search criteria; clarify budget readiness, locations, dealbreakers, preferences, or tradeoffs; or apply approved buyer-profile updates discovered from listing feedback. Prefer this skill before any buyer-centered listing scoring or comparison when no profile exists.
+license: 0BSD
 ---
 
 # Home Buyer Profile

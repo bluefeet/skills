@@ -5,7 +5,10 @@
   "license": "0BSD",
   "scripts": {
     "format": "prettier . --write",
-    "format:check": "prettier . --check"
+    "format:check": "prettier . --check",
+    "publish": "gh skill publish",
+    "publish:check": "gh skill publish --dry-run",
+    "preflight": "npm run format:check && npm run publish:check"
   },
   "devDependencies": {
     "prettier": "^3.8.3"

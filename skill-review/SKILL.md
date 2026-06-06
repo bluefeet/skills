@@ -1,6 +1,7 @@
 ---
 name: skill-review
 description: Review an existing skill directory, SKILL.md file, or pasted skill text for skill-authoring quality. Use when the user asks to review, audit, critique, evaluate, improve, harden, or quality-check a skill's metadata, trigger behavior, progressive disclosure, instruction design, examples, bundled assets, dependencies, validation loops, or evaluation quality.
+license: 0BSD
 ---
 
 # Skill Review

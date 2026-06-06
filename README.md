@@ -3,7 +3,7 @@
 Install with:
 
 ```
-npx skills@latest add git@github.com:bluefeet/skills.git
+gh skill install bluefeet/skills
 ```
 
 ## The Skills

@@ -1,6 +1,7 @@
 ---
 name: council
 description: Convene a user-approved council of specialized subagents for explicit council, panel, multiple-expert, multi-reviewer, debate, red-team council, or subagent-collaboration requests. Use only when the user fairly explicitly asks for a council-like multi-agent process.
+license: 0BSD
 ---
 
 # Council

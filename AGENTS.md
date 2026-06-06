@@ -5,7 +5,7 @@
 - It is OK to work directly on `main` in this repository. Do not ask for additional permission just because the current branch is `main`.
 - Do not create or require git worktrees unless the user explicitly asks for one.
 - Do not commit spec and plan files.
-- Before committing run `npm run format:check`.
+- Before committing run `npm run preflight`.
 
 ## Skill Authoring
 

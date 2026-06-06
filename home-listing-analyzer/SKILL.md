@@ -1,6 +1,7 @@
 ---
 name: home-listing-analyzer
 description: Manage markdown records for residential home-for-purchase listings in a buyer's home search. Use this skill whenever the user wants to import a listing URL or pasted listing content, update an existing listing, add initial impressions, post-tour notes, realtor/advisor feedback, compare listings, score listings against a buyer profile, report on active listings, or identify buyer-profile signals from listing feedback. This skill depends on the home buyer profile; if no buyer profile exists, use the buyer profile workflow first.
+license: 0BSD
 ---
 
 # Home Listing Analyzer

@@ -1,6 +1,7 @@
 ---
 name: contract-cartographer
 description: Diagnose the real contract around a user-pointed code target in an existing codebase. Use when the user asks to understand, audit, map, clarify, or review a contract, interface, API, module boundary, subsystem, workflow, or service boundary, especially when callers know too much, tests need awkward mocks, behavior is misused, inputs are broad, side effects are surprising, or the target feels hard to change safely. Do not use for ordinary bugfixes, generic code review, broad architecture brainstorming, or implementing an already chosen refactor.
+license: 0BSD
 ---
 
 # Contract Cartographer

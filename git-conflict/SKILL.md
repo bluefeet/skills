@@ -1,6 +1,7 @@
 ---
 name: git-conflict
 description: Helps resolve or recover from Git conflicts or interrupted operations, including merge, rebase, cherry-pick, revert, stash apply/pop, autostash, marker-only cleanup, or safe branch rebase/update previews. Does not apply to generic Git advice, ordinary commits, commit-message drafting, or history organization.
+license: 0BSD
 ---
 
 # Git Conflict
